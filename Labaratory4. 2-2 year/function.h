@@ -28,4 +28,6 @@ void DeleteStudentForFamily(ListOfStudents* List, char* Family);
 void DeleteNotCleverStudent(ListOfStudents* List);
 void DeleteInListOfOrdinal(ListOfStudents* List, int OrdinalNumber);
 void WriteStudentInFile(char* FileName, ListOfStudents* Humans);
+ListOfStudents* ReadInFile(char* FileName);
+void PrintNeededStudent(ListOfStudents* List, char* SmallStr, char* PartStudent, int FindNumber);
 #endif

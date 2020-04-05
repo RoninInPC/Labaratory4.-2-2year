@@ -1,4 +1,5 @@
 #include"function.h"
+#include"strfunction.h"
 #include<stdio.h>
 #include<windows.h>
 #include<time.h>
@@ -100,7 +101,15 @@ void PrintCleverStudent(ListOfStudents* List) {
 		List = List->NextPointer;
 	}
 }
-
+void PrintNeededStudent(ListOfStudents* List,char* SmallStr,char* PartStudent, int FindNumber) {
+	while (1) {
+		if (FindStrInPartOfStudent(SmallStr, List->Human, PartStudent, FindNumber) == 1) {
+			PrintStudent(&List->Human);
+		}
+		if (List->NextPointer == NULL) break;
+		List = List->NextPointer;
+	}
+}
 void DeleteStudentForFamily(ListOfStudents* List, char* Family) {
 	while (List != NULL) {
 		if (List->Human.Family == Family) {
@@ -218,4 +227,70 @@ void WriteStudentInFile(char* FileName,ListOfStudents* Humans){
 		}
 	}
 	fclose(f);
+}
+ListOfStudents* ReadInFile(char* FileName) {
+	FILE* f;
+	char c;
+	char* Str = (char*)malloc(0 * sizeof(char));
+	int k = 0;
+	int q = 0;
+	ListOfStudents* Humans = (ListOfStudents*)malloc(sizeof(ListOfStudents));
+	Humans->BeforePointer = NULL;
+	Humans->NextPointer = NULL;
+	if (FileName[strlen(FileName) - 3] == 'd' && FileName[strlen(FileName) - 2] == 'a' && FileName[strlen(FileName) - 1] == 't') {
+		fopen_s(&f, FileName, "rb");
+		while (1) {
+			fread(&c, sizeof(c), 1, f);
+			if (c == '\n' || c == EOF) {
+				Str[k] = '\0';
+				Student Human = StrToStudent(Str);
+				q++;
+				if (q == 1) {
+					Humans->Human = Human;
+				}
+				else {
+					if (feof(f) != 0) break;
+					PushInList(Humans, Human);
+				}
+				k = 0;
+			}
+			else
+			{
+				k++;
+				Str = (char*)realloc(Str, k * sizeof(char));
+				Str[k - 1] = c;
+			}
+			if (feof(f) != 0) break;
+		}
+	}
+	else
+	{
+		fopen_s(&f, FileName, "r");
+		while (1) {
+			fscanf_s(f, "%c", &c);
+			if (c == '\n') {
+				Str[k] = '\0';
+				Student Human = StrToStudent(Str);
+				
+				q++;
+				if (q == 1) {
+					Humans->Human = Human;
+				}
+				else {
+					if (feof(f) != 0) break;
+					PushInList(Humans, Human);
+				}
+				k = 0;
+			}
+			else
+			{
+				k++;
+				Str = (char*)realloc(Str, k * sizeof(char));
+				Str[k - 1] = c;
+			}
+			if (feof(f) != 0) break;
+		}
+	}
+	fclose(f);
+	return Humans;
 }
